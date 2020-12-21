@@ -4,13 +4,13 @@
 #![cfg_attr(test, deny(warnings))]
 //! # Hello.rs
 //!
-//! 使用Warp编写的Hello world网页应用。
+//! 使用Warp[^warp-official-site]编写的Hello world网页应用。
 //!
 //! 为了使用到Warp，除了在Cargo.toml中声明。在代码里面还需要明确使用Warp的Filter模块。代码如下：
 //! ``use warp::Filter``
 //!
 //!
-//! tokio是一个Rust编程语言的异步运行时,提供异步事件驱动平台，构建快速，
+//! tokio[^tokio-official-site]是一个Rust编程语言的异步运行时,提供异步事件驱动平台，构建快速，
 //! 可靠和轻量级网络应用。利用Rust的所有权和并发模型确保线程安全。这里我们通过调用``tikio::main``来
 //! 让Warp具备异步处理能力。代码如下：
 //! ``#[tokio::main]``
@@ -35,6 +35,15 @@
 //! World网页应用。如果细心的话，可以发现我们使用了tokio模块的v0.2.5，而不是最新的v0.3。
 //! 当使用v0.3的时候会发生什么呢？如果用tokio模块的v0.3来改写这个hello.rs的话，你写出来的代码会和现在
 //! 有什么不同呢？
+//!
+//! [^warp-official-site]: Warp is a super-easy, composable, web server framework for warp speeds.
+//! The fundamental building block of warp is the Filter: they can be combined and composed to 
+//! express rich requirements on requests.
+//! Official site: <https://github.com/seanmonstar/warp> 
+//!
+//! [^tokio-official-site]:Tokio is an asynchronous runtime for the Rust programming language. 
+//! It provides the building blocks needed for writing network applications. 
+//! Official site: <https://tokio.rs/>  
 //!
 use warp::Filter;
 
