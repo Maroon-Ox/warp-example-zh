@@ -16,6 +16,26 @@
 //! ``#[tokio::main]``
 //!
 //! 下面我们进入到main函数的编写。
+//! ``use warp::Filter;``
+//!
+//! ``#[tokio::main]``
+//!
+//! ``async fn main() {``
+//!
+//! ``   // Match any request and return hello world!``
+//!
+//! ``   let routes = warp::any().map(|| "Hello, World!");``
+//!
+//! 
+//! ``   warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;``
+//!
+//! ``}``
+//! 
+//! 以上是使用Warp编写的第一个Hello
+//! World网页应用。如果细心的话，可以发现我们使用了tokio模块的v0.2.5，而不是最新的v0.3。
+//! 当使用v0.3的时候会发生什么呢？如果用tokio模块的v0.3来改写这个hello.rs的话，你写出来的代码会和现在
+//! 有什么不同呢？
+//!
 use warp::Filter;
 
 #[tokio::main]
