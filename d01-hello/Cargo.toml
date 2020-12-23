@@ -10,3 +10,5 @@ edition = "2018"
 tokio = { version = "0.2", features = ["full"] }
 warp = "0.2.5"
 
+[dev-dependencies]
+pretty_env_logger = "0.4"
