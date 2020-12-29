@@ -1,4 +1,18 @@
+//! # URL路径
+//!
+//! Warp中的URL路径的构建是通过```warp::path```来实现的。Path提供了一种方便的方式来把多个路径filter链接在一起。
+//!
+//! path filter支持一下对于HTTP请求的处理：
+//! * ``path``匹配一个具体的路径片段。
+//! * ``param``试图将路径片段解析为一个类型参数，例如/:u16
+//! * ``end``匹配路径结尾。
+//! * ``path!``宏将多个路径和参数的filter整合在一起。
+//!
+//! 代码中展现了如下几种定义URL路径的方法：
+//! * 简单的GET请求：```let hi = warp::path("hi").map(|| "Hello, World!");```
+//!
 #![deny(warnings)]
+extern crate pretty_env_logger;
 
 use warp::Filter;
 
@@ -26,7 +40,7 @@ async fn main() {
     //
     // GET /:u16/times/:u16
     let times =
-        warp::path!(u16 / "times" / u16).map(|a, b| format!("{} times {} = {}", a, b, a * b));
+        warp::path!(u64 / "times" / u64).map(|a, b| format!("{} times {} = {}", a, b, a * b));
 
     // Oh shoot, those math routes should be mounted at a different path,
     // is that possible? Yep.
@@ -82,7 +96,14 @@ async fn main() {
     // GET /math/sum/:u32/:u32
     // GET /math/:u16/times/:u16
 
-    let routes = warp::get().and(hi.or(hello_from_warp).or(bye).or(math).or(sum).or(times));
+    let routes = warp::get()
+        .and(hi.
+            or(hello_from_warp).
+            or(bye).
+            or(math).
+            or(sum).
+            or(times)
+        );
 
     // Note that composing filters for many routes may increase compile times (because it uses a lot of generics).
     // If you wish to use dynamic dispatch instead and speed up compile times while
