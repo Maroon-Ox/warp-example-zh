@@ -12,3 +12,6 @@ warp = "0.2.5"
 
 [dev-dependencies]
 pretty_env_logger = "0.4"
+
+[build]
+rustdocflags = ["--no-deps"]

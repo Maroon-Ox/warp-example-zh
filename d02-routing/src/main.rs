@@ -1,6 +1,7 @@
 #![deny(warnings)]
-
 use warp::Filter;
+
+extern crate pretty_env_logger;
 
 #[tokio::main]
 async fn main() {
