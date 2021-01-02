@@ -10,10 +10,23 @@
 //!
 //! 代码中展现了如下几种定义URL路径的方法：
 //! * 简单的GET请求：```let hi = warp::path("hi").map(|| "Hello, World!");```
+//! * 利用path!宏，可以把多个路径和参数链接在一起。例如：
+//!   ** ```path!("hello" / "from" / "mars")```
+//!   ** ```path!("sum" / u32 /u32 )```
+//!   ** ```path!(u32 / "times" / u32 )```
+//! * 除了利用path!宏，还可以利用and函数把多个filter拼接在一起。例如：
+//! ```
+//! let math = warp::path("math");
+//! _sum = math.and(sum);
+//! _times = math.and(times);
+//! let bye = warp::path("bye").and(warp::path::param());
+//! ```
 //!
+//! * 另外，还有or函数可以和and类似的方式来把多个filter组合在一起。
+//!
+
 #![deny(warnings)]
 extern crate pretty_env_logger;
-
 use warp::Filter;
 
 #[tokio::main]
