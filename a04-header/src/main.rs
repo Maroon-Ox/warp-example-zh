@@ -11,8 +11,9 @@
 #![deny(warnings)]
 use std::convert::Infallible;
 use std::net::SocketAddr;
-use warp::{Filter, Rejection, Reply};
+use warp::{Filter, Rejection, Reply, http::header::HeaderValue};
 use warp::http::StatusCode;
+use serde::{Serialize};
 
 /// Create a server that requires header conditions:
 ///
@@ -26,15 +27,45 @@ async fn main() {
 
     // For this example, we assume no DNS was used,
     // so the Host header should be an address.
-
     let routes = warp::header::<SocketAddr>("host")
-        .and(warp::header::exact("accept", "application/json"))
-        .map(|addr| format!("accepting JSON ONLY on {}", addr));
+        .and(warp::header::value("content-type"))
+        .and(warp::header::exact_ignore_case("accept", "*/*"))
+        .map(|addr: SocketAddr, value: HeaderValue| format!("accepting {:?} on {:?}", value, addr));
 
     warp::serve(routes.recover(handle_rejection)).run(([0, 0, 0, 0], 3030)).await;
 }
 
-async fn handle_rejection(_err: Rejection) -> Result<impl Reply, Infallible> {
-    Ok(warp::reply::with_status("Second handle after rejected.", StatusCode::OK))
+#[derive(Serialize)]
+struct ErrorMessage {
+    code: u16,
+    message: String,
+}
+async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
+    let code;
+    let message;
+
+    if err.is_not_found(){
+        code    = StatusCode::NOT_FOUND;
+        message = "Rejected due to :NOT_FOUND.";
+    } else if let Some(_e) = err.find::<warp::reject::InvalidHeader>() {
+        code    = StatusCode::BAD_REQUEST;
+        message = "Rejected due to :InvalidHeader.";
+    } else if let Some(_e) = err.find::<warp::reject::MissingHeader>() {
+        code    = StatusCode::BAD_REQUEST;
+        message = "Rejected due to :MissingHeader.";
+     } else if let Some(_e) = err.find::<warp::reject::UnsupportedMediaType>(){
+        code    = StatusCode::BAD_REQUEST;
+        message = "Rejected due to :UnsupportedMediaType.";
+     } else {
+        code    = StatusCode::INTERNAL_SERVER_ERROR;
+        message = "Unhandled Rejection.";
+     }
+
+    let json = warp::reply::json(&ErrorMessage {
+        code:       code.as_u16(), 
+        message:    message.into(), 
+    });
+
+    Ok(warp::reply::with_status(json, code))
 }
 
