@@ -1,5 +1,4 @@
 FROM rust:1.49.0 as builder
-RUN apt-get update && apt-get upgrade -y
 WORKDIR /app
 ADD . /app
 RUN rustup target add armv7-unknown-linux-musleabihf
