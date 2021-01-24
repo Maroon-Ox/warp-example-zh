@@ -1,0 +1,40 @@
+version: '3'
+services:
+    web1:
+        image: xue35/hello-warp
+        expose:
+          - "3030"
+    web2:
+        image: xue35/hello-warp
+        expose:
+          - "3030"
+    web3:
+        image: xue35/hello-warp
+        expose:
+          - "3030"
+    web4:
+        image: xue35/hello-warp
+        expose:
+          - "3030"
+    web5:
+        image: xue35/hello-warp
+        expose:
+          - "3030"
+    haproxy:
+        container_name: warp-haproxy
+        image: haproxy
+        restart: always
+        hostname: haproxy
+        volumes:
+          - ./haproxy/config:/usr/local/etc/haproxy/haproxy.cfg
+        links:
+          - web1
+          - web2
+          - web3
+          - web4
+          - web5                   
+        ports:
+          - "3030:3030"
+        expose:
+          - "3030"
+          
