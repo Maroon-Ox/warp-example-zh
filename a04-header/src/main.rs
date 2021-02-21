@@ -9,11 +9,11 @@
 //! 此示例代码中，我们只接受text/html。对于其它内容格式不合要求，直接返回``400 Bad request``错误。
 //!
 #![deny(warnings)]
+use serde::Serialize;
 use std::convert::Infallible;
 use std::net::SocketAddr;
-use warp::{Filter, Rejection, Reply, http::header::HeaderValue};
 use warp::http::StatusCode;
-use serde::{Serialize};
+use warp::{http::header::HeaderValue, Filter, Rejection, Reply};
 
 /// Create a server that requires header conditions:
 ///
@@ -32,7 +32,9 @@ async fn main() {
         .and(warp::header::exact_ignore_case("accept", "*/*"))
         .map(|addr: SocketAddr, value: HeaderValue| format!("accepting {:?} on {:?}", value, addr));
 
-    warp::serve(routes.recover(handle_rejection)).run(([0, 0, 0, 0], 3030)).await;
+    warp::serve(routes.recover(handle_rejection))
+        .run(([0, 0, 0, 0], 3030))
+        .await;
 }
 
 #[derive(Serialize)]
@@ -44,28 +46,27 @@ async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
     let code;
     let message;
 
-    if err.is_not_found(){
-        code    = StatusCode::NOT_FOUND;
+    if err.is_not_found() {
+        code = StatusCode::NOT_FOUND;
         message = "Rejected due to :NOT_FOUND.";
     } else if let Some(_e) = err.find::<warp::reject::InvalidHeader>() {
-        code    = StatusCode::BAD_REQUEST;
+        code = StatusCode::BAD_REQUEST;
         message = "Rejected due to :InvalidHeader.";
     } else if let Some(_e) = err.find::<warp::reject::MissingHeader>() {
-        code    = StatusCode::BAD_REQUEST;
+        code = StatusCode::BAD_REQUEST;
         message = "Rejected due to :MissingHeader.";
-     } else if let Some(_e) = err.find::<warp::reject::UnsupportedMediaType>(){
-        code    = StatusCode::BAD_REQUEST;
+    } else if let Some(_e) = err.find::<warp::reject::UnsupportedMediaType>() {
+        code = StatusCode::BAD_REQUEST;
         message = "Rejected due to :UnsupportedMediaType.";
-     } else {
-        code    = StatusCode::INTERNAL_SERVER_ERROR;
+    } else {
+        code = StatusCode::INTERNAL_SERVER_ERROR;
         message = "Unhandled Rejection.";
-     }
+    }
 
     let json = warp::reply::json(&ErrorMessage {
-        code:       code.as_u16(), 
-        message:    message.into(), 
+        code: code.as_u16(),
+        message: message.into(),
     });
 
     Ok(warp::reply::with_status(json, code))
 }
-
