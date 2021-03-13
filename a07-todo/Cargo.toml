@@ -1,0 +1,16 @@
+[package]
+name = "a07-todo"
+version = "0.1.0"
+authors = ["rpi400 <xue35@icloud.com>"]
+edition = "2018"
+
+[dependencies]
+serde   = "1.0"
+serde_json   = "1.0"
+pretty_env_logger = "0.4"
+serde_derive = "1.0"
+log = "0.4"
+tokio   = { version = "1.0", features = ["full"] }
+warp    = { version ="0.3", features = ["tls"] }
+sqlx    = { version = "0.5", features = [ "runtime-tokio-rustls" ] }
+
